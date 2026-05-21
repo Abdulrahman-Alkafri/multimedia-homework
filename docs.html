@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelLab - Documentation</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+            line-height: 1.7;
+            padding: 30px;
+        }
+        .container { max-width: 950px; margin: auto; }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+        h1 small { font-size: 0.5em; color: #888; display: block; margin-top: 5px; }
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 6px;
+            margin: 30px 0 15px;
+        }
+        h3 { color: #34495e; margin: 18px 0 8px; }
+        p, li { margin-bottom: 8px; }
+        ul { padding-right: 25px; }
+        code {
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            direction: ltr;
+            unicode-bidi: embed;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            margin: 10px 0 15px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .file-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .file-table th, .file-table td {
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            text-align: right;
+        }
+        .file-table th { background: #2980b9; color: white; }
+        .file-table tr:nth-child(even) { background: #f9f9f9; }
+        .file-table code { background: #e8e8e8; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: white;
+            margin: 2px;
+        }
+        .badge-blue { background: #2980b9; }
+        .badge-green { background: #27ae60; }
+        .badge-orange { background: #e67e22; }
+        .badge-red { background: #c0392b; }
+        .req-list { list-style: none; padding: 0; }
+        .req-list li {
+            padding: 8px 15px;
+            margin: 4px 0;
+            background: #e8f6f3;
+            border-right: 4px solid #1abc9c;
+            border-radius: 4px;
+        }
+        .req-list li span { font-weight: bold; color: #16a085; }
+        .shortcut {
+            display: inline-block;
+            background: #34495e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .warn {
+            background: #ffeaa7;
+            border-right: 4px solid #fdcb6e;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="card" style="text-align:center;">
+        <h1>PixelLab
+            <small>Desktop Application - Multimedia Systems Course 2026</small>
+        </h1>
+        <p>
+            <span class="badge badge-blue">Java 21</span>
+            <span class="badge badge-green">Swing GUI</span>
+            <span class="badge badge-orange">Maven</span>
+        </p>
+    </div>
+
+    <!-- ==================== BUILD & RUN ==================== -->
+    <div class="card">
+        <h2>كيفية البناء والتشغيل</h2>
+
+        <h3>المتطلبات</h3>
+        <ul>
+            <li>Java JDK 21 (OpenJDK) - <code>sudo apt install openjdk-21-jdk</code></li>
+            <li>Apache Maven - <code>sudo apt install maven</code></li>
+        </ul>
+
+        <h3>الطريقة 1: سطر الأوامر (الأسهل)</h3>
+        <pre>cd ~/Documents/multimedia-homework
+mvn compile exec:java</pre>
+        <p>أو ببساطة:</p>
+        <pre>./run.sh</pre>
+
+        <h3>الطريقة 2: من VS Code</h3>
+        <ol>
+            <li>افتح المجلد في VS Code</li>
+            <li>افتح ملف <code>Main.java</code></li>
+            <li>اضغط <span class="shortcut">F5</span> أو اذهب إلى Run &gt; Start Debugging</li>
+            <li>اختر "Run PixelLab" من القائمة</li>
+        </ol>
+
+        <div class="warn">
+            <strong>ملاحظة مهمة:</strong>
+            إذا ظهر خطأ <code>libpthread symbol lookup error</code>، فهذا بسبب تعارض مكتبات snap مع Java.
+            الحل: استخدم <code>mvn compile exec:java</code> أو شغّل من VS Code عبر <span class="shortcut">F5</span>
+            (ملف launch.json يعالج المشكلة تلقائياً).
+        </div>
+
+        <h3>البناء فقط (بدون تشغيل)</h3>
+        <pre>mvn compile</pre>
+    </div>
+
+    <!-- ==================== REQUIREMENTS ==================== -->
+    <div class="card">
+        <h2>المتطلبات المُنجزة</h2>
+        <ol class="req-list">
+            <li><span>1.</span> إدخال الصورة وعرضها: فتح من القائمة + السحب والإفلات (Drag &amp; Drop)</li>
+            <li><span>2.</span> التحويل بين الأنظمة اللونية: RGB, CMYK, HSV, YUV, LAB, YCbCr</li>
+            <li><span>3.</span> عرض مركبات كل نظام لوني بشكل منفصل مع سلايدر للتعديل وخيار التعطيل</li>
+            <li><span>4.</span> تمثيل الأنظمة اللونية في فضاءات ثنائية وثلاثية الأبعاد</li>
+            <li><span>5.</span> التفاعل مع الفضاء اللوني: تدوير، تكبير، تحديد ألوان ومزامنة القيم</li>
+            <li><span>6.</span> تحديث لحظي عند أي تعديل</li>
+            <li><span>7.</span> التحكم بعدد الألوان (2, 4, 8, 16, 32, 64, 128, 256) باستخدام K-Means</li>
+            <li><span>8.</span> معلومات الصورة: الاسم، الصيغة، الأبعاد، العمق، الحجم</li>
+            <li><span>9.</span> إعادة ضبط القيم الأصلية</li>
+            <li><span>10.</span> حفظ الصورة بصيغة PNG أو JPEG أو BMP</li>
+        </ol>
+    </div>
+
+    <!-- ==================== PROJECT STRUCTURE ==================== -->
+    <div class="card">
+        <h2>بنية المشروع</h2>
+        <pre>multimedia-homework/
+├── pom.xml                          # Maven configuration
+├── run.sh                           # Quick run script
+├── docs.html                        # This file
+└── src/main/java/multimedia/
+    ├── Main.java                    # Entry point
+    ├── PixelLabFrame.java           # Main window &amp; coordination
+    ├── ImagePanel.java              # Image display + drag &amp; drop
+    ├── ColorConverter.java          # Color space conversions + quantization
+    ├── ChannelViewPanel.java        # Channel view, sliders, toggles
+    └── ColorSpaceVisualizer.java    # 2D/3D color space scatter plot</pre>
+    </div>
+
+    <!-- ==================== FILE DETAILS ==================== -->
+    <div class="card">
+        <h2>شرح الملفات</h2>
+
+        <table class="file-table">
+            <tr>
+                <th>الملف</th>
+                <th>الوظيفة</th>
+                <th>الأساليب الرئيسية</th>
+            </tr>
+            <tr>
+                <td><code>Main.java</code></td>
+                <td>نقطة الدخول - يُنشئ النافذة الرئيسية</td>
+                <td><code>main()</code></td>
+            </tr>
+            <tr>
+                <td><code>PixelLabFrame.java</code></td>
+                <td>
+                    النافذة الرئيسية. تحتوي على شريط القوائم (File)،
+                    شريط الأدوات (اختيار النظام اللوني + عدد الألوان)،
+                    ومنطقة العمل (اللوحة اليسرى للصورة + تبويبات يمين).
+                    تنسّق بين جميع المكونات.
+                </td>
+                <td>
+                    <code>openImage()</code> -
+                    <code>saveImage()</code> -
+                    <code>resetImage()</code> -
+                    <code>updateDisplay()</code> -
+                    <code>onPixelClicked()</code>
+                </td>
+            </tr>
+            <tr>
+                <td><code>ImagePanel.java</code></td>
+                <td>
+                    لوحة عرض الصورة. تدعم السحب والإفلات لتحميل الصور.
+                    عند النقر على بكسل يُرسل لون البكسل إلى شريط المعلومات.
+                    تعرض الصورة مع الحفاظ على نسبة العرض إلى الارتفاع.
+                </td>
+                <td>
+                    <code>setImage()</code> -
+                    <code>paintComponent()</code> -
+                    DropTarget للسحب والإفلات
+                </td>
+            </tr>
+            <tr>
+                <td><code>ColorConverter.java</code></td>
+                <td>
+                    جميع التحويلات اللونية يدوياً بالمعادلات الرياضية:
+                    <br>RGB ↔ HSV, CMYK, YUV, YCbCr, LAB
+                    <br>بالإضافة إلى خوارزمية K-Means لتقليل عدد الألوان (Color Quantization).
+                </td>
+                <td>
+                    <code>rgbToHsv()</code> / <code>hsvToRgb()</code> -
+                    <code>rgbToCmyk()</code> / <code>cmykToRgb()</code> -
+                    <code>rgbToLab()</code> / <code>labToRgb()</code> -
+                    <code>fromRgb()</code> / <code>toRgb()</code> -
+                    <code>quantize()</code>
+                </td>
+            </tr>
+            <tr>
+                <td><code>ChannelViewPanel.java</code></td>
+                <td>
+                    يعرض كل قناة لونية كصورة رمادية مصغرة.
+                    كل قناة لها سلايدر لتعديل القيمة (offset)
+                    وخانة اختيار لتفعيل/تعطيل القناة.
+                    يدعم 3 قنوات (RGB, HSV, ...) أو 4 (CMYK).
+                </td>
+                <td>
+                    <code>update()</code> -
+                    <code>applyModifications()</code> -
+                    <code>resetControls()</code> -
+                    <code>updateChannelPreviews()</code>
+                </td>
+            </tr>
+            <tr>
+                <td><code>ColorSpaceVisualizer.java</code></td>
+                <td>
+                    رسم نقاط الألوان في فضاء ثنائي أو ثلاثي الأبعاد.
+                    يأخذ عينة من ~3000 بكسل ويرسمها.
+                    يدعم التدوير بالسحب، التكبير بالعجلة، والنقر لاختيار لون.
+                    يرسم المحاور وإطار المكعب.
+                </td>
+                <td>
+                    <code>updateImage()</code> -
+                    <code>project3D()</code> -
+                    <code>drawPoints3D()</code> -
+                    <code>drawPoints2D()</code> -
+                    <code>pickNearestPoint()</code>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ==================== ALGORITHMS ==================== -->
+    <div class="card">
+        <h2>الخوارزميات المستخدمة</h2>
+
+        <h3>1. تحويل الأنظمة اللونية</h3>
+        <p>جميع التحويلات مكتوبة يدوياً بالمعادلات الرياضية المعروفة:</p>
+        <ul>
+            <li><strong>RGB → HSV:</strong> حساب القيمة (max)، التشبع (diff/max)، صبغة اللون (زاوية 0°-360°)</li>
+            <li><strong>RGB → CMYK:</strong> K = 1 - max(R,G,B)/255، ثم C,M,Y نسبة إلى (1-K)</li>
+            <li><strong>RGB → YUV:</strong> مصفوفة التحويل القياسية مع إزاحة 128 لـ U,V</li>
+            <li><strong>RGB → YCbCr:</strong> معادلات ITU-R BT.601</li>
+            <li><strong>RGB → LAB:</strong> تحويل مرحلتين: RGB→XYZ (عبر linearization + مصفوفة) ثم XYZ→LAB (مرجع D65)</li>
+        </ul>
+
+        <h3>2. تقليل عدد الألوان (K-Means Clustering)</h3>
+        <p>
+            خوارزمية K-Means تعمل على تجميع ألوان البكسلات في <em>k</em> مجموعة:
+        </p>
+        <ol>
+            <li>اختيار <em>k</em> مراكز عشوائية من البكسلات</li>
+            <li>تعيين كل بكسل إلى أقرب مركز (المسافة الإقليدية في فضاء RGB)</li>
+            <li>إعادة حساب المراكز كمتوسط بكسلات كل مجموعة</li>
+            <li>التكرار حتى الثبات (أو 15 تكرار كحد أقصى)</li>
+            <li>استبدال كل بكسل بلون مركز مجموعته</li>
+        </ol>
+
+        <h3>3. الإسقاط ثلاثي الأبعاد</h3>
+        <p>
+            يستخدم إسقاط متعامد (Orthographic Projection) مع مصفوفات دوران حول المحورين X و Y:
+        </p>
+        <pre>// Rotation around Y axis (yaw)
+rx = x * cos(yaw) + z * sin(yaw)
+rz = -x * sin(yaw) + z * cos(yaw)
+
+// Rotation around X axis (pitch)
+ry = y * cos(pitch) - rz * sin(pitch)
+
+// Project to screen
+screenX = centerX + rx * zoom
+screenY = centerY - ry * zoom</pre>
+    </div>
+
+    <!-- ==================== HOW TO USE ==================== -->
+    <div class="card">
+        <h2>كيفية استخدام التطبيق</h2>
+        <ol>
+            <li><strong>تحميل صورة:</strong> File &gt; Open Image أو اسحب صورة إلى منطقة العرض</li>
+            <li><strong>تغيير النظام اللوني:</strong> اختر من القائمة المنسدلة "Color Space" في شريط الأدوات</li>
+            <li><strong>تعديل القنوات:</strong> انتقل إلى تبويب "Channels"، حرّك السلايدر أو عطّل قناة</li>
+            <li><strong>الفضاء ثلاثي الأبعاد:</strong> تبويب "Color Space" - اسحب للتدوير، عجلة الماوس للتكبير</li>
+            <li><strong>اختيار لون:</strong> انقر على الصورة أو على نقطة في الفضاء ثلاثي الأبعاد</li>
+            <li><strong>تقليل الألوان:</strong> غيّر قيمة "Colors" في شريط الأدوات</li>
+            <li><strong>معلومات الصورة:</strong> تبويب "Image Info"</li>
+            <li><strong>الإعادة:</strong> زر "Reset" أو <span class="shortcut">Ctrl+R</span></li>
+            <li><strong>الحفظ:</strong> File &gt; Save Image أو <span class="shortcut">Ctrl+S</span></li>
+        </ol>
+    </div>
+
+    <!-- ==================== KEYBOARD SHORTCUTS ==================== -->
+    <div class="card">
+        <h2>اختصارات لوحة المفاتيح</h2>
+        <table class="file-table">
+            <tr><th>الاختصار</th><th>الوظيفة</th></tr>
+            <tr><td><span class="shortcut">Ctrl+O</span></td><td>فتح صورة</td></tr>
+            <tr><td><span class="shortcut">Ctrl+S</span></td><td>حفظ الصورة</td></tr>
+            <tr><td><span class="shortcut">Ctrl+R</span></td><td>إعادة ضبط القيم الأصلية</td></tr>
+        </table>
+    </div>
+
+    <div class="card" style="text-align:center; color: #888; font-size: 0.9em;">
+        <p>PixelLab - Multimedia Systems Course 2026</p>
+    </div>
+
+</div>
+</body>
+</html>
