@@ -15,6 +15,7 @@ public class PixelLabFrame extends JFrame {
     private ImagePanel imagePanel;
     private ChannelViewPanel channelPanel;
     private ColorSpaceVisualizer colorViz;
+    private ColorPickerPanel colorPicker;
 
     private JComboBox<String> csCombo; // اختيار النظام اللوني
     private JComboBox<Integer> colorCountCombo;
@@ -83,6 +84,10 @@ public class PixelLabFrame extends JFrame {
         colorViz = new ColorSpaceVisualizer();
         colorViz.setColorPickListener((r, g, b) -> showColorInfo(r, g, b));
         tabs.addTab("الفضاء اللوني", colorViz);
+
+        colorPicker = new ColorPickerPanel();
+        colorPicker.setColorPickListener((r, g, b) -> showColorInfo(r, g, b));
+        tabs.addTab("منتقي الألوان", colorPicker);
 
         tabs.addTab("معلومات", buildInfoPanel());
 
@@ -202,7 +207,7 @@ public class PixelLabFrame extends JFrame {
         BufferedImage modified = channelPanel.applyModifications(originalImage, cs);
         int nColors = (Integer) colorCountCombo.getSelectedItem();
         if (nColors < 256) {
-            modified = ColorConverter.quantize(modified, nColors);
+            modified = ImageProcessor.quantize(modified, nColors);
         }
         currentImage = modified;
         imagePanel.setImage(currentImage);
@@ -227,9 +232,11 @@ public class PixelLabFrame extends JFrame {
             lblFileSize.setText(String.format("%.1f KB", fileSizeBytes / 1024.0));
     }
 
-    // عرض معلومات اللون في كل الأنظمة
+    // عرض معلومات اللون في كل الأنظمة مع مزامنة منتقي الألوان
     private void showColorInfo(int r, int g, int b) {
         colorBox.setBackground(new Color(r, g, b));
+        colorPicker.setColor(r, g, b);
+
         double[] hsv = ColorConverter.rgbToHsv(r, g, b);
         double[] cmyk = ColorConverter.rgbToCmyk(r, g, b);
         double[] yuv = ColorConverter.rgbToYuv(r, g, b);

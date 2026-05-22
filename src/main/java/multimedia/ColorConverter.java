@@ -1,8 +1,5 @@
 package multimedia;
 
-import java.awt.image.BufferedImage;
-import java.util.Random;
-
 // صف التحويل بين الأنظمة اللونية
 public class ColorConverter {
 
@@ -209,84 +206,6 @@ public class ColorConverter {
         if (cs.equals("LAB"))   return new double[][]{{0, 100}, {-128, 127}, {-128, 127}};
         if (cs.equals("YCbCr")) return new double[][]{{0, 255}, {0, 255}, {0, 255}};
         return new double[][]{{0, 255}, {0, 255}, {0, 255}};
-    }
-
-    // تقليل عدد الالوان باستخدام خوارزمية K-Means
-    public static BufferedImage quantize(BufferedImage src, int k) {
-        int w = src.getWidth();
-        int h = src.getHeight();
-        int total = w * h;
-        int[] pixels = src.getRGB(0, 0, w, h, null, 0, w);
-
-        // اختيار مراكز عشوائية
-        Random rand = new Random(42);
-        int[][] centers = new int[k][3];
-        for (int i = 0; i < k; i++) {
-            int px = pixels[rand.nextInt(total)];
-            centers[i][0] = (px >> 16) & 0xFF;
-            centers[i][1] = (px >> 8) & 0xFF;
-            centers[i][2] = px & 0xFF;
-        }
-
-        int[] labels = new int[total];
-
-        // تكرار الخوارزمية
-        for (int iter = 0; iter < 15; iter++) {
-            boolean changed = false;
-
-            // تعيين كل بكسل لأقرب مركز
-            for (int i = 0; i < total; i++) {
-                int r = (pixels[i] >> 16) & 0xFF;
-                int g = (pixels[i] >> 8) & 0xFF;
-                int b = pixels[i] & 0xFF;
-
-                int best = 0;
-                int bestDist = Integer.MAX_VALUE;
-                for (int j = 0; j < k; j++) {
-                    int dr = r - centers[j][0];
-                    int dg = g - centers[j][1];
-                    int db = b - centers[j][2];
-                    int d = dr*dr + dg*dg + db*db;
-                    if (d < bestDist) {
-                        bestDist = d;
-                        best = j;
-                    }
-                }
-                if (labels[i] != best) {
-                    labels[i] = best;
-                    changed = true;
-                }
-            }
-            if (!changed) break;
-
-            // اعادة حساب المراكز
-            long[][] sums = new long[k][3];
-            int[] counts = new int[k];
-            for (int i = 0; i < total; i++) {
-                int c = labels[i];
-                sums[c][0] += (pixels[i] >> 16) & 0xFF;
-                sums[c][1] += (pixels[i] >> 8) & 0xFF;
-                sums[c][2] += pixels[i] & 0xFF;
-                counts[c]++;
-            }
-            for (int j = 0; j < k; j++) {
-                if (counts[j] > 0) {
-                    centers[j][0] = (int)(sums[j][0] / counts[j]);
-                    centers[j][1] = (int)(sums[j][1] / counts[j]);
-                    centers[j][2] = (int)(sums[j][2] / counts[j]);
-                }
-            }
-        }
-
-        // بناء الصورة الناتجة
-        BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        int[] outPixels = new int[total];
-        for (int i = 0; i < total; i++) {
-            int c = labels[i];
-            outPixels[i] = (centers[c][0] << 16) | (centers[c][1] << 8) | centers[c][2];
-        }
-        out.setRGB(0, 0, w, h, outPixels, 0, w);
-        return out;
     }
 
     public static int clamp(int val) {
