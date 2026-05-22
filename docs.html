@@ -79,6 +79,7 @@
         .badge-green { background: #27ae60; }
         .badge-orange { background: #e67e22; }
         .badge-red { background: #c0392b; }
+        .badge-purple { background: #8e44ad; }
         .req-list { list-style: none; padding: 0; }
         .req-list li {
             padding: 8px 15px;
@@ -117,6 +118,8 @@
             <span class="badge badge-blue">Java 21</span>
             <span class="badge badge-green">Swing GUI</span>
             <span class="badge badge-orange">Maven</span>
+            <span class="badge badge-purple">OpenCV / JavaCV</span>
+            <span class="badge badge-red">Commons Math</span>
         </p>
     </div>
 
@@ -163,29 +166,49 @@ mvn compile exec:java</pre>
             <li><span>2.</span> التحويل بين الأنظمة اللونية: RGB, CMYK, HSV, YUV, LAB, YCbCr</li>
             <li><span>3.</span> عرض مركبات كل نظام لوني بشكل منفصل مع سلايدر للتعديل وخيار التعطيل</li>
             <li><span>4.</span> تمثيل الأنظمة اللونية في فضاءات ثنائية وثلاثية الأبعاد</li>
-            <li><span>5.</span> التفاعل مع الفضاء اللوني: تدوير، تكبير، تحديد ألوان ومزامنة القيم</li>
-            <li><span>6.</span> تحديث لحظي عند أي تعديل</li>
-            <li><span>7.</span> التحكم بعدد الألوان (2, 4, 8, 16, 32, 64, 128, 256) باستخدام K-Means</li>
+            <li><span>5.</span> التفاعل مع الفضاء اللوني: تدوير، تكبير، تحديد ألوان ومزامنة القيم + منتقي ألوان تفاعلي بنمط Chrome</li>
+            <li><span>6.</span> تحديث لحظي عند أي تعديل (معالجة محسّنة بـ OpenCV والمعالجة المتوازية)</li>
+            <li><span>7.</span> التحكم بعدد الألوان (2, 4, 8, 16, 32, 64, 128, 256) باستخدام OpenCV K-Means++</li>
             <li><span>8.</span> معلومات الصورة: الاسم، الصيغة، الأبعاد، العمق، الحجم</li>
             <li><span>9.</span> إعادة ضبط القيم الأصلية</li>
             <li><span>10.</span> حفظ الصورة بصيغة PNG أو JPEG أو BMP</li>
         </ol>
     </div>
 
+    <!-- ==================== DEPENDENCIES ==================== -->
+    <div class="card">
+        <h2>المكتبات المستخدمة</h2>
+        <table class="file-table">
+            <tr><th>المكتبة</th><th>الإصدار</th><th>الاستخدام</th></tr>
+            <tr>
+                <td><code>javacv-platform</code></td>
+                <td>1.5.10</td>
+                <td>واجهة Java لمكتبة OpenCV - تُستخدم لتسريع تحويلات الألوان (cvtColor) وخوارزمية K-Means للتقليل اللوني بأداء عالٍ عبر كود C++ أصلي مع تحسينات SIMD</td>
+            </tr>
+            <tr>
+                <td><code>commons-math3</code></td>
+                <td>3.6.1</td>
+                <td>Apache Commons Math - مكتبة خوارزميات رياضية ورقمية</td>
+            </tr>
+        </table>
+    </div>
+
     <!-- ==================== PROJECT STRUCTURE ==================== -->
     <div class="card">
         <h2>بنية المشروع</h2>
         <pre>multimedia-homework/
-├── pom.xml                          # Maven configuration
+├── pom.xml                          # Maven configuration + dependencies
 ├── run.sh                           # Quick run script
 ├── docs.html                        # This file
 └── src/main/java/multimedia/
     ├── Main.java                    # Entry point
     ├── PixelLabFrame.java           # Main window &amp; coordination
     ├── ImagePanel.java              # Image display + drag &amp; drop
-    ├── ColorConverter.java          # Color space conversions + quantization
+    ├── ColorConverter.java          # Color space math conversions
+    ├── ImageProcessor.java          # OpenCV-accelerated image processing
     ├── ChannelViewPanel.java        # Channel view, sliders, toggles
-    └── ColorSpaceVisualizer.java    # 2D/3D color space scatter plot</pre>
+    ├── ColorSpaceVisualizer.java    # 2D/3D color space scatter plot
+    └── ColorPickerPanel.java        # Chrome-style HSV color picker</pre>
     </div>
 
     <!-- ==================== FILE DETAILS ==================== -->
@@ -209,14 +232,14 @@ mvn compile exec:java</pre>
                     النافذة الرئيسية. تحتوي على شريط القوائم (File)،
                     شريط الأدوات (اختيار النظام اللوني + عدد الألوان)،
                     ومنطقة العمل (اللوحة اليسرى للصورة + تبويبات يمين).
-                    تنسّق بين جميع المكونات.
+                    تنسّق بين جميع المكونات وتُزامن اللون المُختار عبر جميع الأنظمة.
                 </td>
                 <td>
                     <code>openImage()</code> -
                     <code>saveImage()</code> -
                     <code>resetImage()</code> -
-                    <code>updateDisplay()</code> -
-                    <code>onPixelClicked()</code>
+                    <code>updateImage()</code> -
+                    <code>showColorInfo()</code>
                 </td>
             </tr>
             <tr>
@@ -236,15 +259,29 @@ mvn compile exec:java</pre>
                 <td><code>ColorConverter.java</code></td>
                 <td>
                     جميع التحويلات اللونية يدوياً بالمعادلات الرياضية:
-                    <br>RGB ↔ HSV, CMYK, YUV, YCbCr, LAB
-                    <br>بالإضافة إلى خوارزمية K-Means لتقليل عدد الألوان (Color Quantization).
+                    <br>RGB &#x2194; HSV, CMYK, YUV, YCbCr, LAB
+                    <br>يتضمن دوال تحويل gamma والدوال المساعدة لفضاء LAB عبر XYZ.
                 </td>
                 <td>
                     <code>rgbToHsv()</code> / <code>hsvToRgb()</code> -
                     <code>rgbToCmyk()</code> / <code>cmykToRgb()</code> -
                     <code>rgbToLab()</code> / <code>labToRgb()</code> -
-                    <code>fromRgb()</code> / <code>toRgb()</code> -
-                    <code>quantize()</code>
+                    <code>fromRgb()</code> / <code>toRgb()</code>
+                </td>
+            </tr>
+            <tr>
+                <td><code>ImageProcessor.java</code></td>
+                <td>
+                    معالجة الصور المحسّنة باستخدام OpenCV عبر JavaCV:
+                    <br>- تقليل الألوان بخوارزمية K-Means++ الأصلية من OpenCV
+                    <br>- تعديل القنوات اللونية باستخدام <code>cvtColor</code> و <code>split/merge</code> للأنظمة المدعومة (HSV, YUV, YCbCr, LAB)
+                    <br>- معالجة متوازية بـ <code>IntStream.parallel()</code> للأنظمة غير المدعومة (CMYK, RGB)
+                </td>
+                <td>
+                    <code>quantize()</code> -
+                    <code>applyChannelMods()</code> -
+                    <code>applyOpenCV()</code> -
+                    <code>applyParallel()</code>
                 </td>
             </tr>
             <tr>
@@ -254,28 +291,44 @@ mvn compile exec:java</pre>
                     كل قناة لها سلايدر لتعديل القيمة (offset)
                     وخانة اختيار لتفعيل/تعطيل القناة.
                     يدعم 3 قنوات (RGB, HSV, ...) أو 4 (CMYK).
+                    محسّن بمصفوفات بكسل مجمعة وحساب مشترك للقنوات.
                 </td>
                 <td>
                     <code>update()</code> -
                     <code>applyModifications()</code> -
                     <code>resetControls()</code> -
-                    <code>updateChannelPreviews()</code>
+                    <code>refreshPreviews()</code>
                 </td>
             </tr>
             <tr>
                 <td><code>ColorSpaceVisualizer.java</code></td>
                 <td>
                     رسم نقاط الألوان في فضاء ثنائي أو ثلاثي الأبعاد.
-                    يأخذ عينة من ~3000 بكسل ويرسمها.
+                    يأخذ عينة من ~2500 بكسل ويرسمها.
                     يدعم التدوير بالسحب، التكبير بالعجلة، والنقر لاختيار لون.
                     يرسم المحاور وإطار المكعب.
                 </td>
                 <td>
                     <code>updateImage()</code> -
-                    <code>project3D()</code> -
-                    <code>drawPoints3D()</code> -
-                    <code>drawPoints2D()</code> -
-                    <code>pickNearestPoint()</code>
+                    <code>loadPoints()</code> -
+                    <code>proj()</code> -
+                    <code>tryPick()</code>
+                </td>
+            </tr>
+            <tr>
+                <td><code>ColorPickerPanel.java</code></td>
+                <td>
+                    منتقي ألوان تفاعلي بنمط Chrome:
+                    <br>- مربع تدرج التشبع/القيمة (SV) بحجم 256x256 مع مؤشر دائري قابل للسحب
+                    <br>- شريط صبغة (Hue) عمودي مع مؤشر منزلق
+                    <br>- معاينة اللون الحالي مع عرض القيم في جميع الأنظمة اللونية
+                    <br>- مزامنة ثنائية الاتجاه مع باقي مكونات التطبيق
+                </td>
+                <td>
+                    <code>setColor()</code> -
+                    <code>rebuildSvImage()</code> -
+                    <code>rebuildHueStrip()</code> -
+                    <code>paintComponent()</code>
                 </td>
             </tr>
         </table>
@@ -286,28 +339,43 @@ mvn compile exec:java</pre>
         <h2>الخوارزميات المستخدمة</h2>
 
         <h3>1. تحويل الأنظمة اللونية</h3>
-        <p>جميع التحويلات مكتوبة يدوياً بالمعادلات الرياضية المعروفة:</p>
+        <p>جميع التحويلات مكتوبة يدوياً بالمعادلات الرياضية المعروفة في <code>ColorConverter.java</code>:</p>
         <ul>
-            <li><strong>RGB → HSV:</strong> حساب القيمة (max)، التشبع (diff/max)، صبغة اللون (زاوية 0°-360°)</li>
-            <li><strong>RGB → CMYK:</strong> K = 1 - max(R,G,B)/255، ثم C,M,Y نسبة إلى (1-K)</li>
-            <li><strong>RGB → YUV:</strong> مصفوفة التحويل القياسية مع إزاحة 128 لـ U,V</li>
-            <li><strong>RGB → YCbCr:</strong> معادلات ITU-R BT.601</li>
-            <li><strong>RGB → LAB:</strong> تحويل مرحلتين: RGB→XYZ (عبر linearization + مصفوفة) ثم XYZ→LAB (مرجع D65)</li>
+            <li><strong>RGB &#x2194; HSV:</strong> حساب القيمة (max)، التشبع (diff/max)، صبغة اللون (زاوية 0°-360°)</li>
+            <li><strong>RGB &#x2194; CMYK:</strong> K = 1 - max(R,G,B)/255، ثم C,M,Y نسبة إلى (1-K)</li>
+            <li><strong>RGB &#x2194; YUV:</strong> مصفوفة التحويل القياسية مع إزاحة 128 لـ U,V</li>
+            <li><strong>RGB &#x2194; YCbCr:</strong> معادلات ITU-R BT.601</li>
+            <li><strong>RGB &#x2194; LAB:</strong> تحويل مرحلتين: RGB&#x2192;XYZ (عبر gamma linearization + مصفوفة) ثم XYZ&#x2192;LAB (مرجع D65)</li>
         </ul>
+        <p>عند تطبيق التعديلات على الصورة الكاملة، يستخدم <code>ImageProcessor</code> دوال OpenCV الأصلية (<code>cvtColor</code>) لتحويل الصورة بالكامل دفعة واحدة بدلاً من بكسل ببكسل، مما يوفر تسريعاً كبيراً بفضل كود C++ المحسّن بتعليمات SIMD.</p>
 
-        <h3>2. تقليل عدد الألوان (K-Means Clustering)</h3>
+        <h3>2. تقليل عدد الألوان (K-Means++ عبر OpenCV)</h3>
         <p>
-            خوارزمية K-Means تعمل على تجميع ألوان البكسلات في <em>k</em> مجموعة:
+            يستخدم <code>ImageProcessor.quantize()</code> خوارزمية K-Means الأصلية من مكتبة OpenCV:
         </p>
         <ol>
-            <li>اختيار <em>k</em> مراكز عشوائية من البكسلات</li>
-            <li>تعيين كل بكسل إلى أقرب مركز (المسافة الإقليدية في فضاء RGB)</li>
-            <li>إعادة حساب المراكز كمتوسط بكسلات كل مجموعة</li>
-            <li>التكرار حتى الثبات (أو 15 تكرار كحد أقصى)</li>
+            <li>تحويل بكسلات الصورة إلى مصفوفة <code>Mat</code> بأبعاد N×3 (نوع <code>CV_32F</code>)</li>
+            <li>استدعاء <code>kmeans()</code> من OpenCV مع تهيئة K-Means++ (<code>KMEANS_PP_CENTERS</code>) لاختيار مراكز أولية أفضل</li>
+            <li>15 تكرار كحد أقصى مع شرط توقف عند الثبات (<code>TermCriteria.EPS</code>)</li>
             <li>استبدال كل بكسل بلون مركز مجموعته</li>
         </ol>
+        <p>K-Means++ يعطي نتائج أفضل وتقارب أسرع مقارنة بالتهيئة العشوائية، والتنفيذ الأصلي من OpenCV أسرع بكثير من تنفيذ Java البحت.</p>
 
-        <h3>3. الإسقاط ثلاثي الأبعاد</h3>
+        <h3>3. تعديل القنوات اللونية المحسّن</h3>
+        <p>يستخدم <code>ImageProcessor.applyChannelMods()</code> استراتيجيتين حسب النظام اللوني:</p>
+        <ul>
+            <li><strong>للأنظمة المدعومة بـ OpenCV (HSV, YUV, YCbCr, LAB):</strong>
+                <br>تحويل الصورة بالكامل باستخدام <code>cvtColor</code>، ثم فصل القنوات بـ <code>split</code>،
+                تعديل كل قناة باستخدام <code>convertTo</code> (مع تشبع تلقائي)، ثم دمج بـ <code>merge</code> وإعادة التحويل.
+                يتضمن جداول تحويل بين مدى قيم التطبيق ومدى OpenCV لكل نظام لوني.
+            </li>
+            <li><strong>للأنظمة غير المدعومة (CMYK, RGB):</strong>
+                <br>معالجة متوازية باستخدام <code>IntStream.parallel()</code> مع مصفوفات بكسل مجمعة (<code>getRGB/setRGB</code> بالمصفوفة)
+                للاستفادة من جميع أنوية المعالج.
+            </li>
+        </ul>
+
+        <h3>4. الإسقاط ثلاثي الأبعاد</h3>
         <p>
             يستخدم إسقاط متعامد (Orthographic Projection) مع مصفوفات دوران حول المحورين X و Y:
         </p>
@@ -321,32 +389,60 @@ ry = y * cos(pitch) - rz * sin(pitch)
 // Project to screen
 screenX = centerX + rx * zoom
 screenY = centerY - ry * zoom</pre>
+
+        <h3>5. منتقي الألوان التفاعلي (Color Picker)</h3>
+        <p>
+            منتقي ألوان بنمط Chrome يعمل في فضاء HSV:
+        </p>
+        <ul>
+            <li><strong>مربع SV:</strong> المحور الأفقي = التشبع (Saturation: 0&#x2192;1)، المحور العمودي = القيمة (Value: 1&#x2192;0). يُعاد بناء المربع عند تغيير الصبغة.</li>
+            <li><strong>شريط Hue:</strong> شريط عمودي يمثل الصبغة من 0° إلى 360°.</li>
+            <li><strong>المزامنة:</strong> اختيار لون من أي مصدر (الصورة، الفضاء ثلاثي الأبعاد، المنتقي) يُحدّث جميع المكونات الأخرى تلقائياً.</li>
+        </ul>
     </div>
 
     <!-- ==================== HOW TO USE ==================== -->
     <div class="card">
         <h2>كيفية استخدام التطبيق</h2>
         <ol>
-            <li><strong>تحميل صورة:</strong> File &gt; Open Image أو اسحب صورة إلى منطقة العرض</li>
+            <li><strong>تحميل صورة:</strong> File &gt; Open أو اسحب صورة إلى منطقة العرض</li>
             <li><strong>تغيير النظام اللوني:</strong> اختر من القائمة المنسدلة "Color Space" في شريط الأدوات</li>
-            <li><strong>تعديل القنوات:</strong> انتقل إلى تبويب "Channels"، حرّك السلايدر أو عطّل قناة</li>
-            <li><strong>الفضاء ثلاثي الأبعاد:</strong> تبويب "Color Space" - اسحب للتدوير، عجلة الماوس للتكبير</li>
-            <li><strong>اختيار لون:</strong> انقر على الصورة أو على نقطة في الفضاء ثلاثي الأبعاد</li>
+            <li><strong>تعديل القنوات:</strong> انتقل إلى تبويب "القنوات"، حرّك السلايدر أو عطّل قناة</li>
+            <li><strong>الفضاء ثلاثي الأبعاد:</strong> تبويب "الفضاء اللوني" - اسحب للتدوير، عجلة الماوس للتكبير، انقر لاختيار لون</li>
+            <li><strong>منتقي الألوان:</strong> تبويب "منتقي الألوان" - اسحب المؤشر الدائري على مربع التشبع/القيمة، أو غيّر الصبغة من الشريط الجانبي</li>
+            <li><strong>اختيار لون من الصورة:</strong> انقر على أي بكسل في الصورة لعرض قيمه في جميع الأنظمة اللونية</li>
             <li><strong>تقليل الألوان:</strong> غيّر قيمة "Colors" في شريط الأدوات</li>
-            <li><strong>معلومات الصورة:</strong> تبويب "Image Info"</li>
-            <li><strong>الإعادة:</strong> زر "Reset" أو <span class="shortcut">Ctrl+R</span></li>
-            <li><strong>الحفظ:</strong> File &gt; Save Image أو <span class="shortcut">Ctrl+S</span></li>
+            <li><strong>معلومات الصورة:</strong> تبويب "معلومات"</li>
+            <li><strong>الإعادة:</strong> زر "Reset" في شريط الأدوات أو من القائمة</li>
+            <li><strong>الحفظ:</strong> زر "Save" أو File &gt; Save (يدعم PNG, JPEG, BMP)</li>
         </ol>
     </div>
 
-    <!-- ==================== KEYBOARD SHORTCUTS ==================== -->
+    <!-- ==================== PERFORMANCE ==================== -->
     <div class="card">
-        <h2>اختصارات لوحة المفاتيح</h2>
+        <h2>تحسينات الأداء</h2>
         <table class="file-table">
-            <tr><th>الاختصار</th><th>الوظيفة</th></tr>
-            <tr><td><span class="shortcut">Ctrl+O</span></td><td>فتح صورة</td></tr>
-            <tr><td><span class="shortcut">Ctrl+S</span></td><td>حفظ الصورة</td></tr>
-            <tr><td><span class="shortcut">Ctrl+R</span></td><td>إعادة ضبط القيم الأصلية</td></tr>
+            <tr><th>العملية</th><th>قبل التحسين</th><th>بعد التحسين</th></tr>
+            <tr>
+                <td>تعديل القنوات (HSV, YUV, YCbCr, LAB)</td>
+                <td>حلقة Java بكسل ببكسل مع <code>getRGB/setRGB</code> منفرد</td>
+                <td>OpenCV <code>cvtColor</code> + <code>split/merge</code> + <code>convertTo</code> (كود C++ أصلي)</td>
+            </tr>
+            <tr>
+                <td>تعديل القنوات (CMYK, RGB)</td>
+                <td>حلقة Java تسلسلية</td>
+                <td><code>IntStream.parallel()</code> + مصفوفات بكسل مجمعة (استفادة من جميع الأنوية)</td>
+            </tr>
+            <tr>
+                <td>تقليل الألوان (K-Means)</td>
+                <td>K-Means يدوي بـ Java مع تهيئة عشوائية</td>
+                <td>OpenCV <code>kmeans()</code> أصلي مع K-Means++ (<code>KMEANS_PP_CENTERS</code>)</td>
+            </tr>
+            <tr>
+                <td>معاينة القنوات</td>
+                <td>حساب التحويل N مرات (مرة لكل قناة) + <code>getRGB/setRGB</code> منفرد</td>
+                <td>حساب التحويل مرة واحدة + مصفوفات بكسل مجمعة</td>
+            </tr>
         </table>
     </div>
 
