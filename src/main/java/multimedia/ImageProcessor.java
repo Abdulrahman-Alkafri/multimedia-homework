@@ -8,17 +8,13 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import java.awt.image.BufferedImage;
 import java.util.stream.IntStream;
 
-// معالجة الصور باستخدام OpenCV للأداء العالي
 public class ImageProcessor {
-
-    // =========== تقليل الألوان باستخدام K-Means من OpenCV ===========
 
     public static BufferedImage quantize(BufferedImage src, int k) {
         int w = src.getWidth(), h = src.getHeight();
         int total = w * h;
         int[] pixels = src.getRGB(0, 0, w, h, null, 0, w);
 
-        // بناء مصفوفة Nx3 من نوع float لخوارزمية K-Means
         Mat samples = new Mat(total, 3, CV_32F);
         FloatIndexer si = samples.createIndexer();
         for (int i = 0; i < total; i++) {
@@ -33,7 +29,6 @@ public class ImageProcessor {
         TermCriteria tc = new TermCriteria(TermCriteria.EPS + TermCriteria.MAX_ITER, 15, 1.0);
         kmeans(samples, k, labels, tc, 3, KMEANS_PP_CENTERS, centers);
 
-        // بناء الصورة الناتجة من المراكز
         int[] outPixels = new int[total];
         IntIndexer li = labels.createIndexer();
         FloatIndexer ci = centers.createIndexer();
@@ -55,8 +50,6 @@ public class ImageProcessor {
         return out;
     }
 
-    // =========== تعديل القنوات اللونية ===========
-
     public static BufferedImage applyChannelMods(BufferedImage src, String cs,
             int[] offsets, boolean[] enabled, double[][] ranges) {
         int cvtFwd = getCvtCode(cs, true);
@@ -66,14 +59,12 @@ public class ImageProcessor {
         return applyParallel(src, cs, offsets, enabled, ranges);
     }
 
-    // تعديل القنوات باستخدام OpenCV (للأنظمة المدعومة: HSV, YUV, YCbCr, LAB)
     private static BufferedImage applyOpenCV(BufferedImage src, String cs,
             int cvtFwd, int cvtInv, int[] offsets, boolean[] enabled, double[][] ranges) {
         int w = src.getWidth(), h = src.getHeight();
         int total = w * h;
         int[] pixels = src.getRGB(0, 0, w, h, null, 0, w);
 
-        // بناء Mat بصيغة RGB
         Mat rgb = new Mat(h, w, CV_8UC3);
         UByteIndexer ri = rgb.createIndexer();
         for (int i = 0; i < total; i++) {
@@ -84,12 +75,10 @@ public class ImageProcessor {
         }
         ri.release();
 
-        // تحويل الى الفضاء اللوني المطلوب
         Mat converted = new Mat();
         cvtColor(rgb, converted, cvtFwd);
         rgb.close();
 
-        // فصل القنوات
         MatVector chs = new MatVector();
         split(converted, chs);
 
@@ -103,25 +92,19 @@ public class ImageProcessor {
             double shift = mapping[c][1];
 
             if (!enabled[c]) {
-                // تعطيل القناة - ضبط على القيمة الدنيا
                 double appVal = Math.max(0, ranges[c][0]);
                 double cvVal = appVal * scale + shift;
-                // dst = 0 * src + cvVal
                 ch.convertTo(ch, ch.type(), 0.0, cvVal);
             } else if (offsets[c] != 0) {
-                // إضافة الإزاحة
                 double cvOff = offsets[c] * scale;
-                // dst = 1.0 * src + cvOff (مع تشبع تلقائي)
                 ch.convertTo(ch, ch.type(), 1.0, cvOff);
             }
         }
 
-        // دمج القنوات وإعادة التحويل الى RGB
         merge(chs, converted);
         Mat result = new Mat();
         cvtColor(converted, result, cvtInv);
 
-        // استخراج البكسلات
         int[] outPixels = new int[total];
         UByteIndexer oi = result.createIndexer();
         for (int i = 0; i < total; i++) {
@@ -137,7 +120,6 @@ public class ImageProcessor {
         return out;
     }
 
-    // تعديل القنوات بالتوازي (لـ CMYK و RGB غير المدعومين في OpenCV)
     private static BufferedImage applyParallel(BufferedImage src, String cs,
             int[] offsets, boolean[] enabled, double[][] ranges) {
         int w = src.getWidth(), h = src.getHeight();
@@ -167,9 +149,6 @@ public class ImageProcessor {
         return out;
     }
 
-    // =========== دوال مساعدة ===========
-
-    // أكواد تحويل OpenCV لكل نظام لوني
     private static int getCvtCode(String cs, boolean fwd) {
         return switch (cs) {
             case "HSV"   -> fwd ? COLOR_RGB2HSV_FULL : COLOR_HSV2RGB_FULL;
@@ -180,14 +159,12 @@ public class ImageProcessor {
         };
     }
 
-    // مقياس التحويل بين قيم التطبيق وقيم OpenCV
-    // opencv_value = app_value * scale + shift
     private static double[][] getMapping(String cs) {
         return switch (cs) {
             case "HSV" -> new double[][]{
-                {255.0 / 360.0, 0},  // H: 0-360 → 0-255
-                {255.0 / 100.0, 0},  // S: 0-100 → 0-255
-                {255.0 / 100.0, 0}   // V: 0-100 → 0-255
+                {255.0 / 360.0, 0},
+                {255.0 / 100.0, 0},
+                {255.0 / 100.0, 0}
             };
             case "YUV" -> new double[][]{
                 {1, 0}, {1, 0}, {1, 0}
@@ -196,15 +173,14 @@ public class ImageProcessor {
                 {1, 0}, {1, 0}, {1, 0}
             };
             case "LAB" -> new double[][]{
-                {255.0 / 100.0, 0},  // L: 0-100 → 0-255
-                {1, 128},            // a: -128..127 → 0-255
-                {1, 128}             // b: -128..127 → 0-255
+                {255.0 / 100.0, 0},
+                {1, 128},
+                {1, 128}
             };
             default -> new double[][]{{1, 0}, {1, 0}, {1, 0}};
         };
     }
 
-    // ترتيب القنوات (OpenCV يستخدم YCrCb بدل YCbCr)
     private static int[] getChOrder(String cs) {
         if ("YCbCr".equals(cs)) return new int[]{0, 2, 1};
         return new int[]{0, 1, 2};

@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
-// لوحة عرض الصورة مع دعم السحب والإفلات
 public class ImagePanel extends JPanel {
 
     private BufferedImage image;
@@ -24,7 +23,6 @@ public class ImagePanel extends JPanel {
         setBackground(Color.LIGHT_GRAY);
         setPreferredSize(new Dimension(500, 400));
 
-        // دعم السحب والإفلات
         new DropTarget(this, DnDConstants.ACTION_COPY, new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent evt) {
@@ -44,7 +42,6 @@ public class ImagePanel extends JPanel {
             }
         });
 
-        // عند النقر على الصورة نأخذ لون البكسل
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (image == null || pixelClickListener == null) return;
@@ -79,7 +76,6 @@ public class ImagePanel extends JPanel {
         super.paintComponent(g);
 
         if (image == null) {
-            // رسالة عند عدم وجود صورة
             g.setColor(Color.DARK_GRAY);
             String txt = "اسحب صورة هنا أو استخدم File > Open";
             int txtW = g.getFontMetrics().stringWidth(txt);
@@ -87,7 +83,6 @@ public class ImagePanel extends JPanel {
             return;
         }
 
-        // نرسم الصورة بحيث تتناسب مع حجم اللوحة
         double sx = (double) getWidth() / image.getWidth();
         double sy = (double) getHeight() / image.getHeight();
         double scale = Math.min(sx, sy);

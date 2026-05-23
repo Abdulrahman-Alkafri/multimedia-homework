@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-// لوحة عرض القنوات اللونية والتحكم بها
 public class ChannelViewPanel extends JPanel {
 
     private JPanel container;
@@ -52,7 +51,6 @@ public class ChannelViewPanel extends JPanel {
             p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
             p.setBorder(BorderFactory.createTitledBorder(names[i]));
 
-            // صورة القناة
             JLabel lbl = new JLabel();
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
             lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -60,7 +58,6 @@ public class ChannelViewPanel extends JPanel {
             imgLabels[i] = lbl;
             p.add(lbl);
 
-            // سلايدر للتعديل
             int half = (int)((ranges[i][1] - ranges[i][0]) / 2);
             if (half < 1) half = 1;
             JSlider sl = new JSlider(-half, half, 0);
@@ -73,7 +70,6 @@ public class ChannelViewPanel extends JPanel {
             sliders[i] = sl;
             p.add(sl);
 
-            // تفعيل/تعطيل القناة
             JCheckBox cb = new JCheckBox("مفعلة", true);
             cb.setAlignmentX(Component.CENTER_ALIGNMENT);
             cb.addActionListener(e -> {
@@ -90,13 +86,11 @@ public class ChannelViewPanel extends JPanel {
         repaint();
     }
 
-    // تحديث صور القنوات (محسّن باستخدام مصفوفات بكسل مجمعة)
     private void refreshPreviews() {
         if (srcImage == null || imgLabels == null) return;
         int nCh = ColorConverter.getChannelCount(colorSpace);
         double[][] ranges = ColorConverter.getChannelRanges(colorSpace);
 
-        // نسخة مصغرة للسرعة
         int pw = srcImage.getWidth(), ph = srcImage.getHeight();
         if (pw > 150 || ph > 150) {
             double r = Math.min(150.0 / pw, 150.0 / ph);
@@ -108,7 +102,6 @@ public class ChannelViewPanel extends JPanel {
         int total = pw * ph;
         int[] pixels = small.getRGB(0, 0, pw, ph, null, 0, pw);
 
-        // حساب قيم القنوات مرة واحدة لكل البكسلات
         double[][] allVals = new double[total][];
         for (int i = 0; i < total; i++) {
             int rgb = pixels[i];
@@ -134,13 +127,11 @@ public class ChannelViewPanel extends JPanel {
         }
     }
 
-    // تطبيق التعديلات على الصورة الكاملة (محسّن باستخدام OpenCV والمعالجة المتوازية)
     public BufferedImage applyModifications(BufferedImage original, String cs) {
         if (sliders == null || original == null) return original;
         int nCh = ColorConverter.getChannelCount(cs);
         double[][] ranges = ColorConverter.getChannelRanges(cs);
 
-        // تجميع حالة السلايدرات
         int[] offsets = new int[nCh];
         boolean[] enabled = new boolean[nCh];
         boolean anyChange = false;
