@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقرير مختبر الصور - PixelLab</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Times New Roman", "Arial", serif;
+      font-size: 14pt;
+      line-height: 1.8;
+      color: #000;
+      background: #fff;
+      direction: rtl;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 25mm 25mm 25mm 25mm;
+      background: #fff;
+    }
+
+    /* ===== Header ===== */
+    .doc-header {
+      text-align: center;
+      margin-bottom: 20pt;
+      border-bottom: 2px solid #000;
+      padding-bottom: 12pt;
+    }
+
+    .university-name {
+      font-size: 15pt;
+      font-weight: bold;
+      margin-bottom: 4pt;
+    }
+
+    .faculty-name {
+      font-size: 13pt;
+      margin-bottom: 4pt;
+    }
+
+    .course-name {
+      font-size: 13pt;
+      margin-bottom: 8pt;
+    }
+
+    .report-title {
+      font-size: 18pt;
+      font-weight: bold;
+      margin: 10pt 0 4pt 0;
+    }
+
+    .report-subtitle {
+      font-size: 14pt;
+      font-weight: bold;
+    }
+
+    .report-date {
+      font-size: 12pt;
+      margin-top: 6pt;
+      color: #333;
+    }
+
+    /* ===== Section Headings ===== */
+    h1 {
+      font-size: 16pt;
+      font-weight: bold;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 4pt;
+      margin-top: 22pt;
+      margin-bottom: 10pt;
+      text-align: right;
+    }
+
+    h2 {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-top: 16pt;
+      margin-bottom: 6pt;
+      text-align: right;
+    }
+
+    h3 {
+      font-size: 13pt;
+      font-weight: bold;
+      margin-top: 12pt;
+      margin-bottom: 4pt;
+      text-align: right;
+    }
+
+    p {
+      text-align: justify;
+      margin-bottom: 8pt;
+      text-indent: 1.5em;
+    }
+
+    /* ===== Lists ===== */
+    ul, ol {
+      margin-right: 24pt;
+      margin-bottom: 8pt;
+    }
+
+    li {
+      margin-bottom: 4pt;
+      text-align: justify;
+    }
+
+    /* ===== Table ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12pt 0;
+      font-size: 12pt;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+      border: 1px solid #555;
+      padding: 6pt 8pt;
+      text-align: center;
+    }
+
+    td {
+      border: 1px solid #555;
+      padding: 5pt 8pt;
+      text-align: right;
+      vertical-align: top;
+    }
+
+    td.center {
+      text-align: center;
+    }
+
+    td.status-done {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* ===== Code block ===== */
+    .code-block {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 11pt;
+      background: #f8f8f8;
+      border: 1px solid #ccc;
+      padding: 8pt 12pt;
+      margin: 8pt 0;
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+
+    /* ===== Misc ===== */
+    .section-number {
+      font-weight: bold;
+    }
+
+    .note {
+      font-size: 12pt;
+      color: #333;
+      font-style: italic;
+      border-right: 3px solid #888;
+      padding-right: 8pt;
+      margin: 8pt 0;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page {
+        width: 100%;
+        margin: 0;
+        padding: 20mm 20mm 20mm 20mm;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== Header ===== -->
+  <div class="doc-header">
+    <div class="university-name">الجمهورية العربية السورية</div>
+    <div class="university-name">جامعة دمشق</div>
+    <div class="faculty-name">كلية الهندسة المعلوماتية</div>
+    <div class="course-name">مقرر نظم الوسائط المتعددة - 2026</div>
+    <div class="report-title">تقرير وظيفة مختبر الصور</div>
+    <div class="report-subtitle">PixelLab</div>
+    <div class="report-date">تاريخ التسليم: 24 أيار 2026</div>
+  </div>
+
+  <!-- ===== 1. Introduction ===== -->
+  <h1>1. مقدمة</h1>
+  <p>
+    مختبر الصور (PixelLab) هو تطبيق سطح مكتب تعليمي تفاعلي، تم تطويره باستخدام لغة Java مع مكتبة Swing
+    للواجهة الرسومية. يهدف التطبيق إلى تبسيط مفاهيم الأنظمة اللونية ومعالجة الصور من خلال
+    توفير بيئة بصرية تفاعلية تتيح للمستخدم استكشاف مكوّنات الصورة وآليات تحويلها بين فضاءات الألوان
+    المختلفة بشكل لحظي وفوري.
+  </p>
+  <p>
+    يعتمد التطبيق على معمارية نظيفة موزّعة على سبعة مكوّنات برمجية متخصصة، مع استخدام مكتبة OpenCV
+    (عبر JavaCV) لتحقيق أداء عالٍ في عمليات المعالجة الثقيلة كتقليل الألوان وتعديل القنوات.
+  </p>
+
+  <!-- ===== 2. Architecture ===== -->
+  <h1>2. البنية البرمجية للتطبيق</h1>
+  <p>
+    يتكوّن التطبيق من سبعة ملفات مصدر، كلٌّ منها مسؤول عن وظيفة محددة وفق مبدأ الفصل بين
+    المسؤوليات (Separation of Concerns):
+  </p>
+
+  <table>
+    <tr>
+      <th>الملف</th>
+      <th>المسؤولية</th>
+    </tr>
+    <tr>
+      <td><code>Main.java</code></td>
+      <td>نقطة الدخول — تُهيّئ الواجهة على الخيط الرسومي (EDT) عبر <code>SwingUtilities.invokeLater</code></td>
+    </tr>
+    <tr>
+      <td><code>PixelLabFrame.java</code></td>
+      <td>الإطار الرئيسي للتطبيق — يجمع جميع المكوّنات ويُنسّق التواصل بينها</td>
+    </tr>
+    <tr>
+      <td><code>ColorConverter.java</code></td>
+      <td>مكتبة التحويل الرياضي بين جميع الأنظمة اللونية</td>
+    </tr>
+    <tr>
+      <td><code>ImagePanel.java</code></td>
+      <td>لوحة عرض الصورة مع دعم السحب والإفلات والنقر لاختيار البكسل</td>
+    </tr>
+    <tr>
+      <td><code>ChannelViewPanel.java</code></td>
+      <td>لوحة عرض القنوات اللونية والتحكم بها عبر أشرطة التمرير</td>
+    </tr>
+    <tr>
+      <td><code>ColorSpaceVisualizer.java</code></td>
+      <td>عرض الفضاء اللوني بأبعاد ثنائية وثلاثية مع دعم الدوران والتكبير</td>
+    </tr>
+    <tr>
+      <td><code>ColorPickerPanel.java</code></td>
+      <td>منتقي الألوان التفاعلي بنمط Chrome مع عرض القيم في جميع الأنظمة</td>
+    </tr>
+    <tr>
+      <td><code>ImageProcessor.java</code></td>
+      <td>معالجة الصور بالأداء العالي باستخدام OpenCV (تقليل الألوان، تعديل القنوات)</td>
+    </tr>
+  </table>
+
+  <!-- ===== 3. Requirements ===== -->
+  <h1>3. تغطية المتطلبات</h1>
+  <p>
+    فيما يلي جدول يُبيّن مدى تطبيق كل متطلب من متطلبات الوظيفة:
+  </p>
+
+  <table>
+    <tr>
+      <th>#</th>
+      <th>المتطلب</th>
+      <th>الحالة</th>
+      <th>الملف المسؤول</th>
+    </tr>
+    <tr>
+      <td class="center">1</td>
+      <td>إدخال الصورة عبر الواجهة الرسومية</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>PixelLabFrame.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">1</td>
+      <td>إدخال الصورة عبر السحب والإفلات</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ImagePanel.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">2</td>
+      <td>التحويل بين RGB و CMYK و HSV و YUV و LAB و YCbCr</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ColorConverter.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">3</td>
+      <td>عرض مركبات كل نظام لوني بشكل منفصل</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ChannelViewPanel.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">3</td>
+      <td>تعديل قيم أحد المركبات عبر شريط التمرير</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ChannelViewPanel.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">3</td>
+      <td>تعطيل أحد القنوات وإعادة تشكيل الصورة</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ChannelViewPanel.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">4</td>
+      <td>التمثيل الثلاثي الأبعاد للفضاء اللوني (مكعب ألوان)</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ColorSpaceVisualizer.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">4</td>
+      <td>التمثيل الثنائي الأبعاد مع اختيار المحاور</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ColorSpaceVisualizer.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">5</td>
+      <td>التدوير والتكبير بالفأرة</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ColorSpaceVisualizer.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">5</td>
+      <td>تحديد الألوان من الفضاء اللوني وعرض قيمها</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ColorSpaceVisualizer.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">5</td>
+      <td>مزامنة اللون المختار مع جميع الأنظمة اللونية</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>PixelLabFrame.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">6</td>
+      <td>تحديث التعديلات بالزمن الحقيقي</td>
+      <td class="status-done">مُنجَز</td>
+      <td>جميع المكوّنات</td>
+    </tr>
+    <tr>
+      <td class="center">7</td>
+      <td>التحكم بعدد الألوان (تقليل الألوان بـ K-Means)</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>ImageProcessor.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">8</td>
+      <td>عرض معلومات الصورة (اسم، صيغة، أبعاد، حجم، عمق)</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>PixelLabFrame.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">9</td>
+      <td>إعادة ضبط القيم الأصلية للصورة</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>PixelLabFrame.java</code></td>
+    </tr>
+    <tr>
+      <td class="center">10</td>
+      <td>حفظ الصورة بصيغة PNG أو JPEG أو BMP</td>
+      <td class="status-done">مُنجَز</td>
+      <td><code>PixelLabFrame.java</code></td>
+    </tr>
+  </table>
+
+  <!-- ===== 4. Details ===== -->
+  <div class="page-break"></div>
+  <h1>4. تفاصيل تنفيذ المتطلبات</h1>
+
+  <!-- 4.1 -->
+  <h2>4.1 إدخال الصورة وعرضها</h2>
+  <p>
+    تم دعم طريقتَين لإدخال الصورة:
+  </p>
+  <ul>
+    <li>
+      <strong>الواجهة الرسومية:</strong> عبر قائمة <em>File &gt; Open</em> التي تفتح نافذة اختيار ملف
+      تدعم صيغ JPG و PNG و BMP و GIF.
+    </li>
+    <li>
+      <strong>السحب والإفلات:</strong> تم تسجيل <code>DropTarget</code> على لوحة الصورة باستخدام
+      واجهة <code>java.awt.dnd</code>، بحيث يكفي سحب ملف الصورة وإفلاته على النافذة مباشرةً.
+    </li>
+  </ul>
+  <p>
+    تُعرَض الصورة مُحافَظاً على نسبة أبعادها داخل اللوحة المتاحة، مع حساب عامل المقياس
+    المناسب تلقائياً. عند النقر على أي بكسل تُحسَب إحداثياته الفعلية في الصورة الأصلية
+    وتُعرَض قيمه اللونية في شريط الحالة السفلي بجميع الأنظمة اللونية.
+  </p>
+
+  <!-- 4.2 -->
+  <h2>4.2 التحويل بين الأنظمة اللونية</h2>
+  <p>
+    تم تنفيذ محوّلات رياضية كاملة في الصف <code>ColorConverter</code> تغطي ستة أنظمة لونية:
+  </p>
+
+  <h3>RGB ↔ HSV</h3>
+  <p>
+    يُستخرَج التدرّج اللوني (H) من العلاقة بين القناة ذات القيمة الأعلى والفرق بين الحد الأقصى
+    والأدنى، والإشباع (S) من نسبة الفرق إلى الحد الأقصى، والقيمة (V) هي الحد الأقصى مباشرةً.
+  </p>
+
+  <h3>RGB ↔ CMYK</h3>
+  <p>
+    تُحسَب مركبة المفتاح (K) بقيمة <code>1 - max(R,G,B)</code>، ثم تُشتقّ مركبات السيان والقرمزي
+    والأصفر بقسمة الفرق عن القيمة الكاملة على <code>(1 - K)</code>.
+  </p>
+
+  <h3>RGB ↔ YUV</h3>
+  <p>
+    يُستخدَم المعيار BT.601 حيث:
+    <code>Y = 0.299R + 0.587G + 0.114B</code>، مع إزاحة مركزية لقيم U و V حول 128.
+  </p>
+
+  <h3>RGB ↔ YCbCr</h3>
+  <p>
+    يُطبَّق معيار BT.601 الرقمي مع إزاحة 128 لمركبتَي Cb و Cr لضمان قيم موجبة دائماً.
+  </p>
+
+  <h3>RGB ↔ LAB</h3>
+  <p>
+    يمرّ التحويل عبر مرحلتين: أولاً تحويل RGB الخطي إلى فضاء XYZ باستخدام مصفوفة التحويل
+    القياسية مع تصحيح gamma، ثم تطبيق دالة التحويل اللاخطية للحصول على مركبات L* و a* و b*
+    بالنسبة إلى نقطة الأبيض المرجعية D65.
+  </p>
+
+  <!-- 4.3 -->
+  <h2>4.3 عرض القنوات والتحكم بها</h2>
+  <p>
+    يُبنى الصف <code>ChannelViewPanel</code> ديناميكياً حسب النظام اللوني المختار؛ فعند اختيار
+    CMYK يُعرَض أربع قنوات، وثلاث قنوات لبقية الأنظمة. لكل قناة:
+  </p>
+  <ul>
+    <li>
+      <strong>صورة مصغّرة بالتدرج الرمادي</strong> تعكس توزيع قيم تلك القناة على الصورة.
+      تُبنى هذه الصورة بكفاءة عبر حساب قيم جميع القنوات لجميع البكسلات دفعةً واحدة ثم
+      توزيعها.
+    </li>
+    <li>
+      <strong>شريط تمرير (Slider)</strong> يتيح تعديل قيمة القناة بإزاحة موجبة أو سالبة،
+      مع تحديث لحظي للصورة عند تحريكه.
+    </li>
+    <li>
+      <strong>خانة اختيار (Checkbox)</strong> لتفعيل القناة أو تعطيلها. عند التعطيل تُضبَط
+      قيمة تلك القناة على الحد الأدنى المسموح به في النظام اللوني الحالي.
+    </li>
+  </ul>
+
+  <!-- 4.4 -->
+  <h2>4.4 تمثيل الفضاء اللوني بصرياً</h2>
+  <p>
+    يُنشئ الصف <code>ColorSpaceVisualizer</code> تمثيلاً بصرياً للنقاط اللونية المستخرجة من
+    الصورة بأسلوبَين:
+  </p>
+  <h3>الوضع الثلاثي الأبعاد (3D)</h3>
+  <p>
+    تُعرَض نقاط الألوان داخل مكعب ثلاثي الأبعاد يُرسَم هيكله بالكامل. يعتمد التمثيل على
+    إسقاط المنظور (Perspective Projection) مع تعديل زاوية الدوران الأفقية (yaw) والرأسية (pitch)
+    بسحب الفأرة، والتكبير بعجلة التمرير.
+  </p>
+  <h3>الوضع الثنائي الأبعاد (2D)</h3>
+  <p>
+    يتيح للمستخدم اختيار أي محورَين من محاور النظام اللوني الحالي لعرض العلاقة بينهما،
+    مما يُساعد على فهم التوزيع اللوني في مستويات مختلفة.
+  </p>
+  <p>
+    في كلا الوضعَين يمكن النقر على أي نقطة لاختيار لونها وعرض قيمه في جميع الأنظمة مع
+    مزامنة منتقي الألوان ولوحة القنوات تلقائياً.
+  </p>
+
+  <!-- 4.5 -->
+  <h2>4.5 مزامنة الأنظمة اللونية</h2>
+  <p>
+    تُنسَّق المزامنة مركزياً في الدالة <code>showColorInfo(r, g, b)</code> الموجودة في
+    <code>PixelLabFrame</code>. عند اختيار أي لون من أي مصدر (النقر على الصورة، أو على الفضاء
+    اللوني، أو عبر منتقي الألوان)، تُحسَب قيم اللون في جميع الأنظمة الستة وتُعرَض في شريط
+    الحالة السفلي بالشكل:
+  </p>
+  <div class="code-block">RGB(120, 80, 200) | HSV(260, 60%, 78%) | CMYK(40, 60, 0, 22) | YUV(...) | LAB(...) | YCbCr(...)</div>
+  <p>
+    كما يُحدَّث منتقي الألوان تلقائياً ليعكس اللون المختار.
+  </p>
+
+  <!-- 4.6 -->
+  <h2>4.6 التحديث بالزمن الحقيقي</h2>
+  <p>
+    يعتمد التطبيق على نمط الاستدعاء الراجع (Callback Pattern)؛ كل مكوّن يُبلّغ المكوّن
+    الأب عند حدوث أي تغيير فور وقوعه (تحريك شريط التمرير، تغيير النظام اللوني، تعطيل قناة،
+    الخ). تُطبَّق التعديلات على الصورة وتُحدَّث الواجهة في خيط العرض (EDT) مباشرةً.
+  </p>
+
+  <!-- 4.7 -->
+  <h2>4.7 التحكم بعدد الألوان</h2>
+  <p>
+    تم تنفيذ خوارزمية K-Means للتكميم اللوني (Color Quantization) باستخدام OpenCV عبر مكتبة
+    JavaCV (Bytedeco). تسير الخوارزمية كالتالي:
+  </p>
+  <ol>
+    <li>بناء مصفوفة N×3 من نوع <code>float</code> تحتوي قيم RGB لجميع البكسلات.</li>
+    <li>تشغيل <code>kmeans()</code> بعدد مجموعات يساوي العدد المختار (2, 4, 8, ... 256) مع معيار
+        إيقاف مزدوج (EPS + MAX_ITER) و3 تشغيلات متكررة لضمان أفضل نتيجة.</li>
+    <li>استبدال لون كل بكسل بلون مركز المجموعة التي ينتمي إليها.</li>
+  </ol>
+  <p>
+    يتوفر في شريط الأدوات قائمة منسدلة لاختيار عدد الألوان من: 2، 4، 8، 16، 32، 64، 128، 256.
+  </p>
+
+  <!-- 4.8 -->
+  <h2>4.8 معلومات الصورة</h2>
+  <p>
+    تُعرَض معلومات الصورة في تبويب منفصل داخل اللوحة الجانبية، وتشمل:
+  </p>
+  <ul>
+    <li><strong>اسم الملف</strong></li>
+    <li><strong>صيغة الملف</strong> (JPG, PNG, BMP, ...)</li>
+    <li><strong>أبعاد الصورة</strong> (العرض × الارتفاع بالبكسل)</li>
+    <li><strong>عمق اللون</strong> (بالبت لكل بكسل)</li>
+    <li><strong>حجم الملف على القرص</strong> (بالكيلوبايت)</li>
+  </ul>
+
+  <!-- 4.9 & 4.10 -->
+  <h2>4.9 إعادة الضبط والحفظ</h2>
+  <p>
+    <strong>إعادة الضبط:</strong> تُعيد دالة <code>resetImage()</code> نسخة طازجة من الصورة الأصلية
+    المحفوظة في الذاكرة، وتُعيد جميع أشرطة التمرير إلى الصفر وتُفعّل جميع القنوات وتُعيد
+    تحديد النظام اللوني إلى RGB.
+  </p>
+  <p>
+    <strong>الحفظ:</strong> يُوفّر تطبيق حوار حفظ مخصص يتيح اختيار صيغة الإخراج (PNG أو JPEG أو BMP)
+    ويُلحق اللاحقة الصحيحة تلقائياً إن لم يُدخلها المستخدم.
+  </p>
+
+  <!-- ===== 5. Technical ===== -->
+  <div class="page-break"></div>
+  <h1>5. الجوانب التقنية</h1>
+
+  <h2>5.1 الأداء — استخدام OpenCV</h2>
+  <p>
+    لتحقيق الاستجابة الفورية عند التعديل على الصور الكبيرة، اعتُمِدت استراتيجية مزدوجة:
+  </p>
+  <ul>
+    <li>
+      <strong>المعالجة عبر OpenCV:</strong> للأنظمة التي يدعمها OpenCV مباشرةً (HSV, YUV, YCbCr, LAB)
+      تُحوَّل الصورة كلها إلى المصفوفة المقابلة، تُعدَّل القنوات مباشرةً على المصفوفة بعملية
+      واحدة فائقة الكفاءة (<code>convertTo</code>)، ثم تُحوَّل العودة إلى RGB.
+    </li>
+    <li>
+      <strong>المعالجة المتوازية:</strong> للأنظمة غير المدعومة في OpenCV (CMYK, RGB) تُستخدَم
+      تدفقات Java المتوازية (<code>IntStream.parallel()</code>) لمعالجة بكسلات الصورة على جميع
+      النوى المتاحة في المعالج.
+    </li>
+  </ul>
+
+  <h2>5.2 تحسين المعاينات</h2>
+  <p>
+    لتسريع عرض الصور المصغّرة للقنوات في لوحة <code>ChannelViewPanel</code>، تُحجَّم الصورة
+    مسبقاً إلى أقصى 150×150 بكسل قبل الحساب، مما يُقلّل عدد البكسلات المعالجة بنسبة تتجاوز
+    90% في أغلب الحالات، دون أن يؤثر ذلك على جودة التعديلات المطبّقة على الصورة الكاملة.
+  </p>
+
+  <h2>5.3 إدارة التحديثات</h2>
+  <p>
+    يتبنّى التطبيق نمط المراقب (Observer Pattern) غير المباشر؛ إذ تُسجَّل كل لوحة فرعية
+    استدعاءً راجعاً (Callback) لدى الإطار الرئيسي، فيُطلَق التحديث من مصدر واحد ومنسَّق
+    دون الحاجة إلى تعقيدات الخيوط أو قوائم الانتظار.
+  </p>
+
+  <!-- ===== 6. Summary ===== -->
+  <h1>6. الخلاصة</h1>
+  <p>
+    حقّق تطبيق PixelLab جميع المتطلبات العشرة المطلوبة في الوظيفة بالكامل. تتمثّل أبرز
+    نقاط القوة في:
+  </p>
+  <ul>
+    <li>تغطية شاملة لستة أنظمة لونية مع تحويلات رياضية دقيقة في كلا الاتجاهَين.</li>
+    <li>واجهة تفاعلية سلسة تعكس التعديلات بالزمن الحقيقي بأداء عالٍ.</li>
+    <li>تمثيل بصري غني للفضاء اللوني بُعدَين وثلاثة أبعاد مع إمكانية التفاعل المباشر.</li>
+    <li>استخدام OpenCV لتسريع العمليات الثقيلة وضمان استجابة فورية حتى مع الصور الكبيرة.</li>
+    <li>مزامنة تلقائية للون المختار بين جميع مكوّنات الواجهة.</li>
+    <li>تنفيذ خوارزمية K-Means لتقليل الألوان بدقة وكفاءة عالية.</li>
+  </ul>
+
+</div>
+</body>
+</html>
