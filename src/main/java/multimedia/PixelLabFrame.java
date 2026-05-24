@@ -17,14 +17,12 @@ public class PixelLabFrame extends JFrame {
     private ColorSpaceVisualizer colorViz;
     private ColorPickerPanel colorPicker;
 
-    private JComboBox<String> csCombo; // اختيار النظام اللوني
+    private JComboBox<String> csCombo;
     private JComboBox<Integer> colorCountCombo;
 
-    // شريط معلومات اللون
     private JLabel colorLabel;
     private JPanel colorBox;
 
-    // معلومات الصورة
     private JLabel lblName, lblFormat, lblSize, lblDepth, lblFileSize;
     private String fileName = "";
     private String fileFormat = "";
@@ -36,7 +34,6 @@ public class PixelLabFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // القوائم
         JMenuBar mb = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem openItem = new JMenuItem("Open");
@@ -52,7 +49,6 @@ public class PixelLabFrame extends JFrame {
         mb.add(fileMenu);
         setJMenuBar(mb);
 
-        // شريط الادوات
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.add(new JLabel("Color Space:"));
         csCombo = new JComboBox<>(new String[]{"RGB", "CMYK", "HSV", "YUV", "LAB", "YCbCr"});
@@ -71,7 +67,6 @@ public class PixelLabFrame extends JFrame {
         toolbar.add(btnSave);
         add(toolbar, BorderLayout.NORTH);
 
-        // الجزء الرئيسي
         imagePanel = new ImagePanel();
         imagePanel.setPixelClickListener((r, g, b, x, y) -> showColorInfo(r, g, b));
         imagePanel.addPropertyChangeListener("fileDropped", e -> loadFile((File) e.getNewValue()));
@@ -95,7 +90,6 @@ public class PixelLabFrame extends JFrame {
         split.setDividerLocation(520);
         add(split, BorderLayout.CENTER);
 
-        // شريط الالوان في الأسفل
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         colorBox = new JPanel();
         colorBox.setPreferredSize(new Dimension(20, 20));
@@ -122,7 +116,6 @@ public class PixelLabFrame extends JFrame {
         return p;
     }
 
-    // فتح صورة
     private void openImage() {
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("Images", "jpg", "jpeg", "png", "bmp", "gif"));
@@ -138,7 +131,6 @@ public class PixelLabFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "لا يمكن قراءة الملف");
                 return;
             }
-            // نحول الى RGB
             if (img.getType() != BufferedImage.TYPE_INT_RGB) {
                 BufferedImage tmp = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
                 tmp.getGraphics().drawImage(img, 0, 0, null);
@@ -162,7 +154,6 @@ public class PixelLabFrame extends JFrame {
         }
     }
 
-    // حفظ الصورة
     private void saveImage() {
         if (currentImage == null) { JOptionPane.showMessageDialog(this, "لا توجد صورة"); return; }
         JFileChooser fc = new JFileChooser();
@@ -232,7 +223,6 @@ public class PixelLabFrame extends JFrame {
             lblFileSize.setText(String.format("%.1f KB", fileSizeBytes / 1024.0));
     }
 
-    // عرض معلومات اللون في كل الأنظمة مع مزامنة منتقي الألوان
     private void showColorInfo(int r, int g, int b) {
         colorBox.setBackground(new Color(r, g, b));
         colorPicker.setColor(r, g, b);

@@ -5,15 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-// منتقي الألوان بنمط Chrome - مربع التشبع/القيمة مع شريط الصبغة
 public class ColorPickerPanel extends JPanel {
 
-    private double hue = 0;        // 0-360
-    private double saturation = 1; // 0-1
-    private double value = 1;      // 0-1
+    private double hue = 0;
+    private double saturation = 1;
+    private double value = 1;
 
-    private BufferedImage svImage;   // مربع التشبع والقيمة
-    private BufferedImage hueStrip;  // شريط الصبغة
+    private BufferedImage svImage;
+    private BufferedImage hueStrip;
 
     private static final int SV_SIZE = 256;
     private static final int HUE_WIDTH = 20;
@@ -58,7 +57,6 @@ public class ColorPickerPanel extends JPanel {
 
     public void setColorPickListener(ColorPickListener l) { this.listener = l; }
 
-    // تحديث اللون من الخارج (مثلاً عند النقر على الصورة)
     public void setColor(int r, int g, int b) {
         double[] hsv = ColorConverter.rgbToHsv(r, g, b);
         boolean hueChanged = Math.abs(this.hue - hsv[0]) > 0.5;
@@ -133,12 +131,10 @@ public class ColorPickerPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // مربع التشبع/القيمة
         g2.drawImage(svImage, MARGIN, MARGIN, null);
         g2.setColor(Color.GRAY);
         g2.drawRect(MARGIN - 1, MARGIN - 1, SV_SIZE + 1, SV_SIZE + 1);
 
-        // مؤشر دائري على المربع
         int px = MARGIN + (int)(saturation * (SV_SIZE - 1));
         int py = MARGIN + (int)((1 - value) * (SV_SIZE - 1));
         g2.setStroke(new BasicStroke(2));
@@ -148,13 +144,11 @@ public class ColorPickerPanel extends JPanel {
         g2.setColor(Color.BLACK);
         g2.drawOval(px - 8, py - 8, 16, 16);
 
-        // شريط الصبغة
         int hueX = MARGIN + SV_SIZE + GAP;
         g2.drawImage(hueStrip, hueX, MARGIN, null);
         g2.setColor(Color.GRAY);
         g2.drawRect(hueX - 1, MARGIN - 1, HUE_WIDTH + 1, SV_SIZE + 1);
 
-        // مؤشر على شريط الصبغة
         int hy = MARGIN + (int)(hue / 360.0 * (SV_SIZE - 1));
         g2.setStroke(new BasicStroke(2));
         g2.setColor(Color.WHITE);
@@ -163,7 +157,6 @@ public class ColorPickerPanel extends JPanel {
         g2.setStroke(new BasicStroke(1));
         g2.drawRoundRect(hueX - 3, hy - 4, HUE_WIDTH + 6, 8, 4, 4);
 
-        // معاينة اللون الحالي
         int[] rgb = ColorConverter.hsvToRgb(hue, saturation * 100, value * 100);
         int previewY = MARGIN + SV_SIZE + 15;
 
@@ -172,7 +165,6 @@ public class ColorPickerPanel extends JPanel {
         g2.setColor(Color.GRAY);
         g2.drawRoundRect(MARGIN, previewY, 50, 50, 8, 8);
 
-        // عرض القيم بكل الأنظمة اللونية
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 12));
         int tx = MARGIN + 60, ty = previewY + 4;
@@ -187,7 +179,6 @@ public class ColorPickerPanel extends JPanel {
         g2.drawString(String.format("HSV(%.0f, %.0f%%, %.0f%%)", hsv[0], hsv[1], hsv[2]), tx, ty += 15);
         g2.drawString(String.format("CMYK(%.0f, %.0f, %.0f, %.0f)", cmyk[0], cmyk[1], cmyk[2], cmyk[3]), tx, ty += 15);
 
-        // صف ثاني من القيم
         tx = MARGIN;
         ty = previewY + 70;
         g2.setFont(new Font("Monospaced", Font.PLAIN, 11));

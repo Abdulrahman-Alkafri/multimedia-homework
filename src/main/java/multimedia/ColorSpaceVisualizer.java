@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-// عرض الفضاء اللوني بشكل ثنائي وثلاثي الأبعاد
 public class ColorSpaceVisualizer extends JPanel {
 
     private final DrawArea drawArea;
@@ -23,7 +22,6 @@ public class ColorSpaceVisualizer extends JPanel {
     public ColorSpaceVisualizer() {
         setLayout(new BorderLayout());
 
-        // عناصر التحكم في الأعلى
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btn3d = new JRadioButton("3D", true);
         btn2d = new JRadioButton("2D");
@@ -52,7 +50,6 @@ public class ColorSpaceVisualizer extends JPanel {
 
     public void updateImage(BufferedImage img, String cs) {
         this.colorSpace = cs;
-        // تحديث اسماء المحاور
         String[] names = ColorConverter.getChannelNames(cs);
         comboX.removeAllItems(); comboY.removeAllItems();
         for (int i = 0; i < Math.min(names.length, 3); i++) {
@@ -62,13 +59,12 @@ public class ColorSpaceVisualizer extends JPanel {
         drawArea.loadPoints(img, cs);
     }
 
-    // المنطقة الداخلية للرسم
     private static class DrawArea extends JPanel {
-        List<float[]> pts = new ArrayList<>(); // nx,ny,nz,r,g,b
+        List<float[]> pts = new ArrayList<>();
         String cs = "RGB";
         boolean is3d = true;
         int ax = 0, ay = 1;
-        double yaw = 0.55, pitch = 0.4; // زوايا الدوران
+        double yaw = 0.55, pitch = 0.4;
         double zoom = 200;
         int mx0, my0;
         double yaw0, pitch0;
@@ -82,7 +78,6 @@ public class ColorSpaceVisualizer extends JPanel {
                 public void mousePressed(MouseEvent e) {
                     mx0 = e.getX(); my0 = e.getY();
                     yaw0 = yaw; pitch0 = pitch;
-                    // اختيار لون
                     tryPick(e.getX(), e.getY());
                 }
             });
@@ -165,7 +160,6 @@ public class ColorSpaceVisualizer extends JPanel {
             int nc = Math.min(names.length, 3);
 
             if (is3d) {
-                // رسم حواف المكعب
                 g2.setColor(new Color(180, 180, 180));
                 float s = 0.5f;
                 float[][] c = {{-s,-s,-s},{s,-s,-s},{s,s,-s},{-s,s,-s},{-s,-s,s},{s,-s,s},{s,s,s},{-s,s,s}};
@@ -176,7 +170,6 @@ public class ColorSpaceVisualizer extends JPanel {
                     g2.drawLine(p1[0], p1[1], p2[0], p2[1]);
                 }
 
-                // رسم المحاور
                 int[] o = proj(0,0,0,cx,cy);
                 Color[] ac = {Color.RED, new Color(0,150,0), Color.BLUE};
                 float[][] dirs = {{0.6f,0,0},{0,0.6f,0},{0,0,0.6f}};
@@ -188,7 +181,6 @@ public class ColorSpaceVisualizer extends JPanel {
                     g2.drawString(names[i], end[0]+3, end[1]-3);
                 }
 
-                // رسم النقاط
                 g2.setStroke(new BasicStroke(1));
                 for (float[] p : pts) {
                     int[] sc = proj(p[0], p[1], p[2], cx, cy);
@@ -196,18 +188,15 @@ public class ColorSpaceVisualizer extends JPanel {
                     int sz = (p == picked) ? 6 : 3;
                     g2.fillRect(sc[0]-sz/2, sc[1]-sz/2, sz, sz);
                 }
-                // حلقة الاختيار
                 if (picked != null) {
                     int[] sc = proj(picked[0], picked[1], picked[2], cx, cy);
                     g2.setColor(Color.BLACK);
                     g2.drawOval(sc[0]-5, sc[1]-5, 10, 10);
                 }
             } else {
-                // وضع ثنائي الأبعاد
                 g2.setColor(Color.GRAY);
                 g2.drawLine(cx-(int)(0.55*zoom), cy, cx+(int)(0.55*zoom), cy);
                 g2.drawLine(cx, cy+(int)(0.55*zoom), cx, cy-(int)(0.55*zoom));
-                // اسماء المحاور
                 g2.setColor(Color.RED);
                 if (ax < nc) g2.drawString(names[ax], cx+(int)(0.55*zoom)+4, cy-2);
                 g2.setColor(new Color(0,150,0));

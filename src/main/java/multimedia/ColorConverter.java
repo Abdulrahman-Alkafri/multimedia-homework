@@ -1,9 +1,7 @@
 package multimedia;
 
-// صف التحويل بين الأنظمة اللونية
 public class ColorConverter {
 
-    // تحويل من RGB الى HSV
     public static double[] rgbToHsv(int r, int g, int b) {
         double rd = r / 255.0, gd = g / 255.0, bd = b / 255.0;
         double cmax = Math.max(rd, Math.max(gd, bd));
@@ -48,7 +46,6 @@ public class ColorConverter {
         };
     }
 
-    // تحويل من RGB الى CMYK
     public static double[] rgbToCmyk(int r, int g, int b) {
         double rd = r / 255.0, gd = g / 255.0, bd = b / 255.0;
         double k = 1.0 - Math.max(rd, Math.max(gd, bd));
@@ -69,7 +66,6 @@ public class ColorConverter {
         };
     }
 
-    // تحويل RGB الى YUV
     public static double[] rgbToYuv(int r, int g, int b) {
         double Y = 0.299 * r + 0.587 * g + 0.114 * b;
         double U = -0.14713 * r - 0.28886 * g + 0.436 * b + 128;
@@ -86,7 +82,6 @@ public class ColorConverter {
         };
     }
 
-    // تحويل RGB الى YCbCr
     public static double[] rgbToYCbCr(int r, int g, int b) {
         double Y  = 0.299 * r + 0.587 * g + 0.114 * b;
         double Cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
@@ -102,19 +97,15 @@ public class ColorConverter {
         };
     }
 
-    // تحويل RGB الى LAB عبر فضاء XYZ
     public static double[] rgbToLab(int r, int g, int b) {
-        // اولا نحول الى linear RGB
         double rr = gammaToLinear(r / 255.0);
         double gg = gammaToLinear(g / 255.0);
         double bb = gammaToLinear(b / 255.0);
 
-        // ثم الى XYZ باستخدام مصفوفة التحويل
         double x = 0.4124564 * rr + 0.3575761 * gg + 0.1804375 * bb;
         double y = 0.2126729 * rr + 0.7151522 * gg + 0.0721750 * bb;
         double z = 0.0193339 * rr + 0.1191920 * gg + 0.9503041 * bb;
 
-        // تقسيم على النقطة البيضاء D65
         x /= 0.95047;
         y /= 1.00000;
         z /= 1.08883;
@@ -147,7 +138,6 @@ public class ColorConverter {
         };
     }
 
-    // دوال مساعدة لتحويل gamma
     private static double gammaToLinear(double v) {
         return (v <= 0.04045) ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
     }
@@ -163,17 +153,15 @@ public class ColorConverter {
         return (t3 > 0.008856) ? t3 : (116.0 * t - 16.0) / 903.3;
     }
 
-    // تحويل عام من RGB الى اي نظام لوني
     public static double[] fromRgb(int r, int g, int b, String cs) {
         if (cs.equals("HSV"))   return rgbToHsv(r, g, b);
         if (cs.equals("CMYK"))  return rgbToCmyk(r, g, b);
         if (cs.equals("YUV"))   return rgbToYuv(r, g, b);
         if (cs.equals("LAB"))   return rgbToLab(r, g, b);
         if (cs.equals("YCbCr")) return rgbToYCbCr(r, g, b);
-        return new double[]{r, g, b}; // RGB
+        return new double[]{r, g, b};
     }
 
-    // تحويل من اي نظام لوني الى RGB
     public static int[] toRgb(double[] vals, String cs) {
         if (cs.equals("HSV"))   return hsvToRgb(vals[0], vals[1], vals[2]);
         if (cs.equals("CMYK"))  return cmykToRgb(vals[0], vals[1], vals[2], vals.length > 3 ? vals[3] : 0);
@@ -183,7 +171,6 @@ public class ColorConverter {
         return new int[]{clamp((int) vals[0]), clamp((int) vals[1]), clamp((int) vals[2])};
     }
 
-    // اسماء القنوات لكل نظام لوني
     public static String[] getChannelNames(String cs) {
         if (cs.equals("HSV"))   return new String[]{"Hue", "Saturation", "Value"};
         if (cs.equals("CMYK"))  return new String[]{"Cyan", "Magenta", "Yellow", "Key"};
@@ -198,7 +185,6 @@ public class ColorConverter {
         return 3;
     }
 
-    // المدى لكل قناة {min, max}
     public static double[][] getChannelRanges(String cs) {
         if (cs.equals("HSV"))   return new double[][]{{0, 360}, {0, 100}, {0, 100}};
         if (cs.equals("CMYK"))  return new double[][]{{0, 100}, {0, 100}, {0, 100}, {0, 100}};
